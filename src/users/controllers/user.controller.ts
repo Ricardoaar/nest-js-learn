@@ -1,6 +1,6 @@
 import { UserService } from '../services/user.service';
 import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Put } from '@nestjs/common';
-import { CreateUserDto, UpdateUserDto } from '../dtos/user.dtos';
+import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
 import { isNumber, IsNumber, IsPositive } from 'class-validator';
 
 @Controller('users')

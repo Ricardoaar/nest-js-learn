@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { of } from 'rxjs';
+import { Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
+
+  constructor(@Inject('API_KEY') private apiKey: string) {
+  }
+
   getHello(message: string = 'Hello World!'): string {
-    return message;
+    return `${message} the guard is ${this.apiKey}`;
   }
 
   postHello(): string {
@@ -15,8 +18,7 @@ export class AppService {
     const mockDevices = Array.from({ length: 100 }, (_, i) => `Device ${i}`);
     const start = +offset;
     const end = +limit + +offset;
-    console.log({ start, end });
-    console.log({ startValue: mockDevices[start], endValue: mockDevices[end] });
+
     return mockDevices.slice(start, end);
   }
 

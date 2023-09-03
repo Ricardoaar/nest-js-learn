@@ -1,10 +1,13 @@
 import { IsNotEmpty, IsNumber, IsString, IsPositive } from 'class-validator';
 import { ValidationArguments } from 'class-validator/types/validation/ValidationArguments';
-import { PartialType } from '@nestjs/mapped-types';
+import { PartialType, ApiProperty } from '@nestjs/swagger';
 
 export class CreateProductDto {
   @IsString()
   @IsNotEmpty()
+  @ApiProperty({
+    description: 'The name of a product',
+  })
   readonly name: string;
 
   @IsPositive()

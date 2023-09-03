@@ -17,7 +17,7 @@ import { Response } from 'express';
 import { ProductsService } from '../services/products.service';
 import { ProductEntity } from '../entities/product.entity';
 import { ParseIntPipe } from '../../common/parse-int/parse-int.pipe';
-import { CreateProductDto, UpdateProductDto } from '../dtos/product.dtos';
+import { CreateProductDto, UpdateProductDto } from '../dtos/product.dto';
 
 interface PaginateQuery {
   limit?: number;
