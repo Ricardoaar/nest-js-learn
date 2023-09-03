@@ -13,12 +13,10 @@ import {
   Res,
   DefaultValuePipe,
 } from '@nestjs/common';
-import { raw, Response } from 'express';
+import { Response } from 'express';
 import { ProductsService } from '../services/products.service';
-import { AppService } from '../app.service';
 import { ProductEntity } from '../entities/product.entity';
-import { serializeQuery } from '../entities/product.serialize';
-import { ParseIntPipe } from '../common/parse-int/parse-int.pipe';
+import { ParseIntPipe } from '../../common/parse-int/parse-int.pipe';
 import { CreateProductDto, UpdateProductDto } from '../dtos/product.dtos';
 
 interface PaginateQuery {
@@ -70,7 +68,7 @@ export class ProductsController {
   @Delete('/:id')
   @HttpCode(HttpStatus.ACCEPTED)
   deleteProduct(@Res() rawResponse: Response, @Param('id') id: number): object {
-    // return rawResponse.status(HttpStatus.NOT_FOUND).send();
+
     if (id >= 10) {
       rawResponse.status(HttpStatus.NOT_FOUND).send();
       return {
