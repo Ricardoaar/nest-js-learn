@@ -31,18 +31,18 @@ export class ProductsController {
   }
 
   @Get()
-  getProducts(
+  async getProducts(
     @Query('limit', new DefaultValuePipe(100), ParseIntPipe) limit: number,
     @Query('offset', new DefaultValuePipe(0), ParseIntPipe) offset: number):
-    ProductEntity[] {
+    Promise<ProductEntity[]> {
 
-    return this.productsService.all(limit, offset);
+    return this.productsService.findAll();
   }
 
   @Get('/:id')
   @HttpCode(HttpStatus.ACCEPTED)
-  getProduct(@Param('id', ParseIntPipe, ParseIntPipe) id: number): ProductEntity {
-    return this.productsService.findOne(id);
+  async getProduct(@Param('id') id: number): Promise<ProductEntity> {
+    return await this.productsService.findOne(id);
   }
 
   @Post('/')

@@ -27,6 +27,7 @@ import config from './config';
         API_KEY: Joi.string().required(),
         DATABASE_HOST: Joi.string().required(),
         DATABASE_PORT: Joi.number().default(5432),
+        MONGO_URL: Joi.string().required(),
       }),
     }),
   ],

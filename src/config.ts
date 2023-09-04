@@ -7,6 +7,12 @@ const config = registerAs('config', () => ({
     port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
   },
   api_key: process.env.API_KEY,
+  mongo: {
+    url: process.env.MONGO_URL,
+    port: parseInt(process.env.MONGO_PORT, 10) || 27017,
+    db: process.env.MONGO_DB,
+  },
+
 }));
 
 export default config;

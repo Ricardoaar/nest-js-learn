@@ -1,67 +1,45 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ProductEntity } from '../entities/product.entity';
+import { Db } from 'mongodb';
 
 @Injectable()
 export class ProductsService {
 
-  private products: ProductEntity[] = [];
 
-  private getProducts(): ProductEntity[] {
-    return Array.from({ length: 100 }, (_, i) => {
-      return {
-        id: i,
-        name: `Product ${i}`,
-        price: Math.floor(Math.random() * 1000),
-      };
-    });
-  }
-
-  constructor() {
-    this.products = this.getProducts();
+  constructor(@Inject('DATABASE_CONNECTION') private db: Db) {
   }
 
 
-  findAll(): ProductEntity[] {
-    return this.products;
+  async findAll(): Promise<ProductEntity[]> {
+    return this.db.collection<ProductEntity>('products').find().toArray();
   }
 
-  findOne(id: number): ProductEntity {
-
-    const product = this.products.find(item => {
-      return item.id === id;
-    });
-
-    if (!product) throw new NotFoundException('Product not found');
-
-
-    return product;
+  async findOne(id: number): Promise<ProductEntity> {
+    console.log('serching', id);
+    const found = await this.db.collection<ProductEntity>('products').findOne({ _id: id, id });
+    console.log({ found });
+    if (!found) {
+      throw new NotFoundException(`Product #${id} not found`);
+    }
+    return this.db.collection<ProductEntity>('products').findOne({ _id: id });
   }
 
   create(payload: ProductEntity): ProductEntity {
-    const newProduct = {
-      id: this.products.length + 1,
-      ...payload,
-    };
-    this.products.push(newProduct);
-    return newProduct;
+
+    return payload;
   }
 
   update(id: number, payload: ProductEntity): ProductEntity {
-    this.products[id] = {
-      ...payload,
-      id,
-    };
-    return this.products[id];
+
+    return payload;
   }
 
   delete(id: number): ProductEntity {
-    const product = this.products[id];
-    this.products = this.products.filter(item => item.id !== id);
-    return product;
+    return null;
   }
 
   all(limit = 100, offset = 0): ProductEntity[] {
-    return this.products.slice(offset, offset + limit);
+    return [];
   }
 
 }
