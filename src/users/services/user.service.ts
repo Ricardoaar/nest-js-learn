@@ -19,7 +19,6 @@ export class UserService {
   }
 
   findOne(id: number) {
-    console.log({ id });
     return this.users.find(item => item.id === id);
   }
 

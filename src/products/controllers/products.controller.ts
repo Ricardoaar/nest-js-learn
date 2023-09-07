@@ -10,14 +10,11 @@ import {
   Post,
   Put,
   Query,
-  Res,
-  DefaultValuePipe,
 } from '@nestjs/common';
-import { Response } from 'express';
 import { ProductsService } from '../services/products.service';
-import { ProductEntity } from '../entities/product.entity';
-import { ParseIntPipe } from '../../common/parse-int/parse-int.pipe';
-import { CreateProductDto, UpdateProductDto } from '../dtos/product.dto';
+import { Product } from '../entities/product';
+import { CreateProductDto, FilterProductDto, UpdateProductDto } from '../dtos/product.dto';
+import { MongoIdPipe } from '../../common/mongo-id/mongo-id.pipe';
 
 interface PaginateQuery {
   limit?: number;
@@ -31,30 +28,32 @@ export class ProductsController {
   }
 
   @Get()
-  async getProducts(
-    @Query('limit', new DefaultValuePipe(100), ParseIntPipe) limit: number,
-    @Query('offset', new DefaultValuePipe(0), ParseIntPipe) offset: number):
-    Promise<ProductEntity[]> {
+  async getProducts(@Query() params: FilterProductDto): Promise<Product[]> {
 
-    return this.productsService.findAll();
+    return this.productsService.findAll(params);
   }
 
   @Get('/:id')
   @HttpCode(HttpStatus.ACCEPTED)
-  async getProduct(@Param('id') id: number): Promise<ProductEntity> {
+  async getProduct(@Param('id') id: number): Promise<Product> {
     return await this.productsService.findOne(id);
   }
 
   @Post('/')
-  createProduct(@Body() payload: CreateProductDto): object {
-    console.log({ payload });
-    return { message: 'Create a product' };
+  async createProduct(@Body() payload: CreateProductDto): Promise<object> {
+    const created = await this.productsService.create(payload);
+    return {
+      message: 'ProductEntity created',
+      created,
+    };
   }
 
   @Put('/:id')
-  updateProduct(@Body() payload: UpdateProductDto, @Param('id') id: number): object {
+  async updateProduct(@Body() payload: UpdateProductDto, @Param('id') id: number): Promise<object> {
+    const updatedProduct = await this.productsService.update(id, payload);
     return {
-      ...payload,
+      message: 'ProductEntity updated',
+      updatedProduct,
     };
   }
 
@@ -67,19 +66,14 @@ export class ProductsController {
 
   @Delete('/:id')
   @HttpCode(HttpStatus.ACCEPTED)
-  deleteProduct(@Res() rawResponse: Response, @Param('id') id: number): object {
+  async deleteProduct(@Param('id', MongoIdPipe) id: number): Promise<object> {
+    console.log('pred deleing');
+    const deletedProduct = await this.productsService.delete(id);
 
-    if (id >= 10) {
-      rawResponse.status(HttpStatus.NOT_FOUND).send();
-      return {
-        error: 'Product not found',
-      };
-    }
-
-    rawResponse.status(HttpStatus.ACCEPTED).send({
-      deletedProduct: id,
-    });
-
+    return {
+      message: `ProductEntity #${id} deleted`,
+      deletedProduct,
+    };
   }
 
 }

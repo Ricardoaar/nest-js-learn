@@ -9,7 +9,6 @@ export class OrderService {
   }
 
   getOrders(userId: string) {
-    console.log('KEY IS!!', this.configService.api_key);
     return this.productService.findAll();
   }
 }

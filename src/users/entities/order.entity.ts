@@ -1,10 +1,10 @@
 import { UserEntity } from './user.entity';
-import { ProductEntity } from '../../products/entities/product.entity';
+import { Product } from '../../products/entities/product';
 
 class OrderEntity {
   id: number;
   name: string;
   user: Required<Pick<UserEntity, 'id'>> & Partial<UserEntity>;
-  products: ProductEntity[];
+  products: Product[];
 }
 

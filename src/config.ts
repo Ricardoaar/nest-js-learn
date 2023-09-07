@@ -11,6 +11,8 @@ const config = registerAs('config', () => ({
     url: process.env.MONGO_URL,
     port: parseInt(process.env.MONGO_PORT, 10) || 27017,
     db: process.env.MONGO_DB,
+    user: process.env.MONGO_USER,
+    pass: process.env.MONGO_PASSWORD,
   },
 
 }));

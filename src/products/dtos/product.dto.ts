@@ -1,6 +1,7 @@
-import { IsNotEmpty, IsNumber, IsString, IsPositive } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, IsPositive, IsOptional, Min, ValidateIf } from 'class-validator';
 import { ValidationArguments } from 'class-validator/types/validation/ValidationArguments';
 import { PartialType, ApiProperty } from '@nestjs/swagger';
+import { required } from 'joi';
 
 export class CreateProductDto {
   @IsString()
@@ -8,7 +9,8 @@ export class CreateProductDto {
   @ApiProperty({
     description: 'The name of a product',
   })
-  readonly name: string;
+  readonly description: string;
+
 
   @IsPositive()
   @IsNotEmpty()
@@ -23,6 +25,14 @@ export class CreateProductDto {
     },
   })
   readonly price: number;
+
+  @IsPositive()
+  @IsNumber()
+  stock: number;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly name: string;
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {
@@ -30,4 +40,28 @@ export class UpdateProductDto extends PartialType(CreateProductDto) {
 }
 
 
+export class FilterProductDto {
+  @IsNumber({
+    maxDecimalPlaces: 2,
+  })
+  @IsOptional()
+  @IsPositive()
+  limit: number;
 
+  @IsNumber()
+  @IsOptional()
+  @IsPositive()
+  offset: number;
+
+
+  @Min(0)
+  @IsOptional()
+  minPrice: number;
+
+
+  @ValidateIf((params) => {
+    return !!params.minPrice;
+  })
+  @IsPositive()
+  maxPrice: number;
+}
