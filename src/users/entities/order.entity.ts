@@ -1,5 +1,5 @@
 import { UserEntity } from './user.entity';
-import { Product } from '../../products/entities/product';
+import { Product } from '../../products/entities/product.entity';
 
 class OrderEntity {
   id: number;

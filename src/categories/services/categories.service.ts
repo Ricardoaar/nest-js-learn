@@ -1,63 +1,64 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Category } from '../entities/category.entity';
+import { Model } from 'mongoose';
+import { CategoryDto } from '../dtos/Category.dto';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class CategoriesService {
-  private categories = [];
-
-  constructor() {
-    this.categories = Array.from({ length: 10 }, (_, i) => ({
-      id: i,
-      name: `Category #${i}`,
-      image: `http://placehold.it/200x200?text=Category #${i}`,
-      description: `Description #${i}`,
-    }));
+  constructor(@InjectModel(Category.name) private categories: Model<Category>) {
   }
 
-  getAll({ limit = 10, offset = 0 }) {
-
-    return this.categories.slice(offset, offset + limit);
+  async addProduct(id: number, productId: ObjectId) {
+    const category = await this.categories.findById(id);
+    category.products.pull(productId);
+    return await category.save();
   }
 
-  findOne(id: number) {
-    return this.categories.find(item => item.id === id);
+  async removeProduct(id: number, productId: ObjectId) {
+    const category = await this.categories.findById(id);
+    category.products.pull(productId);
+    return await category.save();
   }
 
-  create(payload) {
-    const newCategory = {
-      id: this.categories.length + 1,
-      ...payload,
-    };
 
-    this.categories.push(newCategory);
-
-    return newCategory;
+  async findAll({ limit = 1000, offset = 0 } = {}) {
+    console.log({ name: Category.name });
+    return await this.categories.find().skip(offset).limit(limit).populate('products').exec();
   }
 
-  update(id: number, payload) {
-    const index = this.categories.findIndex(item => item.id === id);
+  async findOne(id: number) {
+    const category = await this.categories.findById(id).exec();
 
-    if (index === -1) {
-      throw new NotFoundException('Category not found');
+    if (!category) {
+      throw new NotFoundException(`Category #${id} not found`);
     }
 
-    this.categories[index] = {
-      ...this.categories[index],
-      ...payload,
-    };
 
-    return this.categories[index];
+    return category;
   }
 
-  delete(id: number) {
-    const index = this.categories.findIndex(item => item.id === id);
+  async create(payload: CategoryDto) {
+    return await this.categories.create(payload);
+  }
 
-    if (index === -1) {
-      throw new Error('Category not found');
+  async update(id: number, payload) {
+    const category = await this.categories.findByIdAndUpdate(id, { $set: payload }, { new: true }).exec();
+
+    if (!category) {
+      throw new NotFoundException(`Category #${id} not found`);
     }
 
-    this.categories.splice(index, 1);
-
-    return true;
+    return category;
   }
 
+  async delete(id: number) {
+    const category = await this.categories.findByIdAndDelete(id).exec();
+
+    if (!category) {
+      throw new NotFoundException(`Category #${id} not found`);
+    }
+    return category;
+  }
 }

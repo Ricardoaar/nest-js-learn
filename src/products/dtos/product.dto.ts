@@ -1,7 +1,17 @@
-import { IsNotEmpty, IsNumber, IsString, IsPositive, IsOptional, Min, ValidateIf } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  IsPositive,
+  IsOptional,
+  Min,
+  ValidateIf,
+  ValidateNested, IsMongoId,
+} from 'class-validator';
 import { ValidationArguments } from 'class-validator/types/validation/ValidationArguments';
 import { PartialType, ApiProperty } from '@nestjs/swagger';
 import { required } from 'joi';
+import { CategoryDto } from '../../categories/dtos/Category.dto';
 
 export class CreateProductDto {
   @IsString()
@@ -33,6 +43,11 @@ export class CreateProductDto {
   @IsString()
   @IsNotEmpty()
   readonly name: string;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  category: string;
+
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {

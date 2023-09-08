@@ -12,7 +12,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ProductsService } from '../services/products.service';
-import { Product } from '../entities/product';
+import { Product } from '../entities/product.entity';
 import { CreateProductDto, FilterProductDto, UpdateProductDto } from '../dtos/product.dto';
 import { MongoIdPipe } from '../../common/mongo-id/mongo-id.pipe';
 
