@@ -1,62 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UseInterceptors } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
+import { InjectModel } from '@nestjs/mongoose';
+import { User } from '../entities/user.entity';
+import { Model } from 'mongoose';
+import { SanitizeMongooseModelInterceptor } from 'nestjs-mongoose-exclude';
 
+@UseInterceptors(
+  new SanitizeMongooseModelInterceptor({
+    excludeMongooseId: false,
+    excludeMongooseV: true,
+  }),
+)
 @Injectable()
 export class UserService {
-  users = [];
 
-  constructor() {
-    this.users = [
-      { id: 1, name: 'John' },
-      { id: 2, name: 'Doe' },
-      { id: 3, name: 'Jane' },
-      { id: 4, name: 'Jack' },
-    ];
+  constructor(@InjectModel(User.name) private UserModel: Model<User>) {
+
   }
 
 
   getAll() {
-    return this.users;
+    return this.UserModel.find();
   }
 
-  findOne(id: number) {
-    return this.users.find(item => item.id === id);
+  async findOne(id: number) {
+    return this.UserModel.findById(id);
   }
 
-  create(payload) {
-    const newUser = {
-      id: this.users.length + 1,
-      ...payload,
-    };
-
-    this.users.push(newUser);
-
-    return newUser;
+  async create(payload) {
+    const newUserModel = new this.UserModel(payload);
+    newUserModel.password = await bcrypt.hash(payload.password, 10);
+    await newUserModel.save();
+    const { password, ...data } = newUserModel.toJSON();
+    return data;
   }
 
-  update(id: number, payload) {
-    const index = this.users.findIndex(item => item.id === id);
-
-    if (index === -1) {
-      throw new Error('User not found');
-    }
-
-    this.users[index] = {
-      ...this.users[index],
-      ...payload,
-    };
-
-    return this.users[index];
+  async update(id: number, payload) {
+    return this.UserModel.findByIdAndUpdate(id, { $set: payload }, { new: true });
   }
 
-  delete(id: number) {
-    const index = this.users.findIndex(item => item.id === id);
-
-    if (index === -1) {
-      throw new Error('User not found');
-    }
-
-    this.users.splice(index, 1);
-
-    return true;
+  async delete(id: number) {
+    return this.UserModel.findByIdAndDelete(id);
   }
 }

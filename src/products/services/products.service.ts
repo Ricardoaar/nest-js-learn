@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UseInterceptors } from '@nestjs/common';
 import { Product } from '../entities/product.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -33,19 +33,16 @@ export class ProductsService {
   }
 
   async create(payload: CreateProductDto): Promise<Product> {
-    const createdProduct = await this.productModel.create(payload);
-    return createdProduct;
+    return await this.productModel.create(payload);
   }
 
   async update(id: number, payload: UpdateProductDto): Promise<Product> {
-    const updatedProduct = await this.productModel.findByIdAndUpdate(id, { $set: payload }, { new: true }).exec();
-
-    return updatedProduct;
+    return await this.productModel.findByIdAndUpdate(id, { $set: payload }, { new: true }).exec();
   }
 
   async delete(id: number): Promise<Product> {
 
-    const deletedProduct = await this.productModel.findByIdAndDelete(id).exec();
+    const deletedProduct = await this.productModel.findByIdAndDelete(id);
 
     if (!deletedProduct) throw new NotFoundException(`Product #${id} not found`);
     return deletedProduct as Product;
