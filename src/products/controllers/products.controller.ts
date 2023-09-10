@@ -67,7 +67,6 @@ export class ProductsController {
   @Delete('/:id')
   @HttpCode(HttpStatus.ACCEPTED)
   async deleteProduct(@Param('id', MongoIdPipe) id: number): Promise<object> {
-    console.log('pred deleing');
     const deletedProduct = await this.productsService.delete(id);
 
     return {

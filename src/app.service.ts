@@ -1,13 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
+import config from './config';
+import { ConfigType } from '@nestjs/config';
 
 @Injectable()
 export class AppService {
 
-  constructor(@Inject('API_KEY') private apiKey: string) {
+  constructor(@Inject(config.KEY) private generalConfig: ConfigType<typeof config>) {
   }
 
   getHello(message: string = 'Hello World!'): string {
-    return `${message} the guard is ${this.apiKey}`;
+    return `${message} the g1uard is ${this.generalConfig.api_key}`;
   }
 
   postHello(): string {

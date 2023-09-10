@@ -13,8 +13,6 @@ export class ProductsService {
   }
 
 
-
-
   async findAll(params?: FilterProductDto): Promise<Product[]> {
     const { limit = 30, offset = 0, minPrice, maxPrice } = params || {};
     const filters: any = {};
@@ -36,7 +34,6 @@ export class ProductsService {
 
   async create(payload: CreateProductDto): Promise<Product> {
     const createdProduct = await this.productModel.create(payload);
-    console.log({ createdProduct });
     return createdProduct;
   }
 

@@ -24,7 +24,6 @@ export class CategoriesService {
 
 
   async findAll({ limit = 1000, offset = 0 } = {}) {
-    console.log({ name: Category.name });
     return await this.categories.find().skip(offset).limit(limit).populate('products').exec();
   }
 

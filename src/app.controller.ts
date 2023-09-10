@@ -1,11 +1,14 @@
-import { Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, SetMetadata, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
+import { ApiKeyGuard } from './auth/guards/api-key.guard';
+import { isPublic } from './decorators/decorators.decorator';
 
 interface GetDevicesParams {
   limit: number;
   offset: number;
 }
 
+@UseGuards(ApiKeyGuard)
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {
@@ -23,6 +26,7 @@ export class AppController {
   }
 
   @Get('devices')
+  @isPublic()
   getDevices(@Query() params: GetDevicesParams): string[] {
     const { limit, offset } = params;
     const devices = this.appService.getDevices(limit, offset);
