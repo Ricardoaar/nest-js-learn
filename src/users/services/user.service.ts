@@ -20,11 +20,14 @@ export class UserService {
 
 
   getAll() {
-    return this.UserModel.find();
+    return this.UserModel.find({}, {
+      password: 0,
+    });
   }
 
   async findOne(id: number) {
-    return this.UserModel.findById(id);
+    const { password, ...user } = await this.UserModel.findById(id);
+    return user;
   }
 
   async create(payload) {
@@ -41,5 +44,11 @@ export class UserService {
 
   async delete(id: number) {
     return this.UserModel.findByIdAndDelete(id);
+  }
+
+  async findOneByName(username: string) {
+    return this.UserModel.findOne({
+      name: username,
+    });
   }
 }

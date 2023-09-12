@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Post, Query, SetMetadata, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ApiKeyGuard } from './auth/guards/api-key.guard';
-import { isPublic } from './decorators/decorators.decorator';
+import { isPublic } from './auth/decorators/isPublic.decorator';
 
 interface GetDevicesParams {
   limit: number;

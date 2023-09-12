@@ -9,6 +9,8 @@ import { CategoriesModule } from './categories/categories.module';
 import { HttpModule } from '@nestjs/axios';
 import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
+import { AuthService } from './auth/services/auth.service';
+import { AuthModule } from './auth/auth.module';
 import config from './config';
 
 
@@ -30,9 +32,10 @@ import config from './config';
         MONGO_URL: Joi.string().required(),
       }),
     }),
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AuthService],
 })
 
 export class AppModule {

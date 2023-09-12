@@ -15,6 +15,7 @@ import { User, UserSchema } from './entities/user.entity';
   }])],
   controllers: [UserController, OrderController],
   providers: [UserService, OrderService, Product],
+  exports: [UserService],
 })
 
 export class UsersModule {
