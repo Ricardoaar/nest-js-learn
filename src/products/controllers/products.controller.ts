@@ -9,24 +9,30 @@ import {
   Patch,
   Post,
   Put,
-  Query,
+  Query, UseGuards,
 } from '@nestjs/common';
 import { ProductsService } from '../services/products.service';
 import { Product } from '../entities/product.entity';
 import { CreateProductDto, FilterProductDto, UpdateProductDto } from '../dtos/product.dto';
 import { MongoIdPipe } from '../../common/mongo-id/mongo-id.pipe';
+import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { isPublic } from '../../auth/decorators/isPublic.decorator';
 
 interface PaginateQuery {
   limit?: number;
   offset?: number;
 }
 
+
+@UseGuards(JwtAuthGuard)
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {
 
   }
 
+  @isPublic()
   @Get()
   async getProducts(@Query() params: FilterProductDto): Promise<Product[]> {
 

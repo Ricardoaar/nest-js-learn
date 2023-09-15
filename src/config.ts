@@ -14,6 +14,9 @@ const config = registerAs('config', () => ({
     user: process.env.MONGO_USER,
     pass: process.env.MONGO_PASSWORD,
   },
+  jwt: {
+    secret: process.env.JWT_SECRET,
+  },
 
 }));
 

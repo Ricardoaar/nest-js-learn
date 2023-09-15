@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UseInterceptors } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, UseInterceptors } from '@nestjs/common';
 import { Product } from '../entities/product.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -24,7 +24,7 @@ export class ProductsService {
 
   async findOne(id: number): Promise<Product> {
 
-    const found = this.productModel.findById(id).populate('category').exec();
+    const found = await this.productModel.findById(id).populate('category').exec();
     if (!found) {
       throw new NotFoundException(`Product #${id} not found`);
     }

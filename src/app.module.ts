@@ -8,10 +8,11 @@ import { ProductsModule } from './products/products.module';
 import { CategoriesModule } from './categories/categories.module';
 import { HttpModule } from '@nestjs/axios';
 import { DatabaseModule } from './database/database.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigType } from '@nestjs/config';
 import { AuthService } from './auth/services/auth.service';
 import { AuthModule } from './auth/auth.module';
 import config from './config';
+import { JwtModule } from '@nestjs/jwt';
 
 
 @Module({
@@ -30,9 +31,19 @@ import config from './config';
         DATABASE_HOST: Joi.string().required(),
         DATABASE_PORT: Joi.number().default(5432),
         MONGO_URL: Joi.string().required(),
+        JWT_SECRET: Joi.string().required(),
       }),
     }),
     AuthModule,
+    JwtModule.registerAsync(
+      {
+        inject: [config.KEY],
+        useFactory: (configService: ConfigType<typeof config>) => ({
+          secret: configService.jwt.secret,
+          signOptions: { expiresIn: '1d' },
+        }),
+      },
+    ),
   ],
   controllers: [AppController],
   providers: [AppService, AuthService],

@@ -7,6 +7,7 @@ export class User {
   constructor() {
   }
 
+  id: string;
 
   @Prop({ required: true, type: String, index: true })
   name: string;
